@@ -1,0 +1,20 @@
+{
+    "object": "container", 
+    "slug": "asynchrone-net", 
+    "title": "L'asynchrone et le multithread en .NET", 
+    "introduction": "introduction.md", 
+    "conclusion": "conclusion.md", 
+    "children": [
+        {
+            "object": "extract",
+            "slug": "await-async-un-couple-inseparable.md",
+            "title": "await/async, un couple inséparable",
+            "text": "await-async-un-couple-inseparable.md"
+        }
+    ], 
+    "version": 2, 
+    "description": "async et await sont vos amis.", 
+    "type": "TUTORIAL", 
+    "licence": "CC-BY-SA"
+}
+
