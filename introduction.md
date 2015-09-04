@@ -19,3 +19,4 @@ Avant tout, je vous propose de vous poser trois questions :
 Vous vous rendrez vite compte qu'en informatique, on peut tout à fait faire un bébé en un mois du moment qu'on a 10 femmes,
 et que cela est rendu possible par les technique d'asynchronisme.
 
+![netlogo](archive:net-logo.jpg)

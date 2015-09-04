@@ -7,10 +7,35 @@
     "children": [
         {
             "object": "extract",
-            "slug": "await-async-un-couple-inseparable.md",
+            "slug": "await-async-un-couple-inseparable",
             "title": "await/async, un couple inséparable",
             "text": "await-async-un-couple-inseparable.md"
+        },
+        {
+            "object": "extract",
+            "slug": "tp-un-chargeur-de-liens-web",
+            "title": "TP: Un chargeur de liens web",
+            "text": "tp-un-chargeur-de-liens-web.md"
+        },
+        {
+            "object": "extract",
+            "slug": "asynchronisme-et-event-based-pattern",
+            "title": "Asynchronisme et Event-based Pattern",
+            "text": "asynchronisme-et-event-based-pattern.md"
+        },
+        {
+            "object": "extract",
+            "slug": "partage-de-ressources",
+            "title": "Partage de ressources",
+            "text": "partage-de-ressources.md"
+        },
+        {
+            "object": "extract",
+            "slug": "tp-application-graphique",
+            "title": "TP: Application graphique",
+            "text": "tp-application-graphique.md"
         }
+            
     ], 
     "version": 2, 
     "description": "async et await sont vos amis.", 
