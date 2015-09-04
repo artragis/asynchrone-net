@@ -42,7 +42,8 @@ Avouons que cela est peu pratique. Alors vous avez une idée. Vous dites "je sai
 Voilà, vous venez de faire votre première action asynchrone.
 
 Maintenant, vous êtes libre d'aider ceux qui vous le demandent. La seule condition: il faudra que vous soyez en mesure d'entendre le bip sonore 
-et que vous ne soyez pas trop loin de la cuisine afin de ne pas laisser trop longtemps les cookies cuire. De même il faut que vous gardiez en mémoire que vous attendez ce bip sonore.
+et que vous ne soyez pas trop loin de la cuisine afin de ne pas laisser trop longtemps les cookies cuire.
+De même il faut que vous gardiez en mémoire que vous attendez ce bip sonore.
 
 Pour une application en C# ça sera le travail de async et await de faire tout ça. Alors allons-y, codons :
 
@@ -71,7 +72,9 @@ namespace test_cookie
             }
             Console.Out.WriteLine("On forme les cookies et on les met au four");
             // attend pendant 5 secondes mais ne truste pas les ressources
-            await Task.Factory.StartNew(() => { Console.Out.WriteLine("On met le minuteur."); System.Threading.Thread.Sleep(5000); Console.Out.WriteLine("DRIIIIIIIIIIIIIIIIING"); });
+            await Task.Factory.StartNew(() => { Console.Out.WriteLine("On met le minuteur."); 
+                                                System.Threading.Thread.Sleep(5000);
+                                                Console.Out.WriteLine("DRIIIIIIIIIIIIIIIIING"); });
             Console.Out.WriteLine("Sortir les cookies du four");
         }
     }
@@ -173,19 +176,22 @@ Plus précisemment, quand vous dites qu'une méthode est async, vous annoncez qu
 Du coup le compilateur va regarder le type de retour de la fonction. Et il s'attend à soit `Task` soit `Task<Un type personnel>`.
 
 Une fois cela fait, il va *instancier* cet objet, et y exécuter le code de la méthode. Si vous avez dit `async Task` il comprend "la tâche à exécuter ne retourne rien".
-C'est pourquoi je n'ai pas besoin de faire de `return` dans ma fonction. A l'opposé si j'avais demandé un `async Task<int>` il se serait attendu à ce que je retourne un `int`.
+C'est pourquoi je n'ai pas besoin de faire de `return` dans ma fonction. A l'opposé si j'avais demandé un `async Task<int>`
+il se serait attendu à ce que je retourne un `int`.
 
 [[a]]
-|Vous trouverez dans la documentation que `async void` est aussi possible MAIS il est fortement déconseillé. Il n'est là que pour un seul cas : quand vous voulez créer 
-|un event listener. Nous reviendrons plus tard sur ce cas.
+|Vous trouverez dans la documentation que `async void` est aussi possible MAIS il est fortement déconseillé.
+|Il n'est là que pour un seul cas : quand vous voulez créer un event listener. Nous reviendrons plus tard sur ce cas.
 
-Plus tard je fais donc appelle à await. Ce dernier va dire au programme principal "bon là je vais devoir attendre un signal, alors je te laisse libre mais revient me voir rapidement".
+Plus tard je fais donc appelle à await. Ce dernier va dire au programme principal "bon là je vais devoir attendre un signal,
+alors je te laisse libre mais revient me voir rapidement".
 
 [[q]]
 |Et ton histoire de Task factomachin là?
 
-await n'est capable d'attendre que des fonctions asynchrone. On a vue qu'en fait une fonction asynchrone c'est une Task qui a été créé par async. Mais on peut aussi la créer nous même,
-pour cela, il faut utiliser `Task<Votre Type De Retour>.Factory.StartNew(()=>lecode de la fonction; return ce_qu_il_faut)`. C'est à la main la même chose que lorsqu'on avait fait async.
+await n'est capable d'attendre que des fonctions asynchrone. On a vue qu'en fait une fonction asynchrone c'est une Task qui a été créé par async.
+Mais on peut aussi la créer nous même,pour cela, il faut utiliser `Task<Votre Type De Retour>.Factory.StartNew(()=>lecode de la fonction; return ce_qu_il_faut)`.
+C'est à la main la même chose que lorsqu'on avait fait async.
 
 # L'objet Task volume 1
 
@@ -209,4 +215,25 @@ L'idée derrière les coroutines est celle-ci :
 
 ![Organisation des coroutines]()
 
-L'idée maintenant sera de lancer les Task asynchrone 
+L'idée maintenant sera de lancer les `Task` asynchrone puis de demander "attend qu'elles soient toutes finies".
+
+Et ça se fait très simplement :
+
+
+```csharp
+List<Task> tasks = new List<Task>();
+// On lance les tâches mais on ne les attend pas
+tasks.Add(Task.Factory.StartNew(() => { Console.Out.WriteLine("On met le minuteur."); 
+                                                System.Threading.Thread.Sleep(5000);
+                                                Console.Out.WriteLine("DRIIIIIIIIIIIIIIIIING"); });
+tasks.Add(Task.Factory.StartNew(()=> {System.Threading.Thread.Sleep(4000);/*trop facile de nettoyer :p*/});
+await Task.WaitAll(tasks);// puis on attend que tout soit fini
+```
+
+Si vos `Task` retournaient une valeur, un entier par exemple, vous pourriez retrouver l'ensemble des valeurs dans le tableau que retourne WaitAll.
+
+[[i]]
+|L'objet `Task` est vraiment primordial, il est à la base de toute un paradigme de programmation asynchrone appellé
+|["Task-based Asynchronous Pattern"](https://msdn.microsoft.com/en-us/library/hh873175.aspx) qu'on peut traduire par "Programmation Asynchrone basée sur les Tâches". 
+|Vous vous doutes bien qu'il existe de ce fait un autre "Pattern", nous le verrons plus tard. Je vous conseille néanmoins d'utiliser le TAP.
+
