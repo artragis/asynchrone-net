@@ -19,12 +19,6 @@
         },
         {
             "object": "extract",
-            "slug": "asynchronisme-et-event-based-pattern",
-            "title": "Asynchronisme et Event-based Pattern",
-            "text": "asynchronisme-et-event-based-pattern.md"
-        },
-        {
-            "object": "extract",
             "slug": "partage-de-ressources",
             "title": "Partage de ressources",
             "text": "partage-de-ressources.md"
@@ -34,6 +28,12 @@
             "slug": "tp-application-graphique",
             "title": "TP: Application graphique",
             "text": "tp-application-graphique.md"
+        },
+        {
+            "object": "extract",
+            "slug": "les-autres-modeles-de-programmation",
+            "title": "Les autres modèles de programmation",
+            "text": "les-autres-modeles-de-programmation.md"
         }
             
     ], 

@@ -213,7 +213,7 @@ L'idée derrière les coroutines est celle-ci :
 - lancer les coroutines une par une dans le processus du cadenceur;
 - régulièrement le cadenceur vérifie l'état des coroutines et avertit le programme principal de leur fin.
 
-![Organisation des coroutines]()
+![Organisation des coroutines](archive:boucle-coroutine.png)
 
 L'idée maintenant sera de lancer les `Task` asynchrone puis de demander "attend qu'elles soient toutes finies".
 
@@ -227,13 +227,17 @@ tasks.Add(Task.Factory.StartNew(() => { Console.Out.WriteLine("On met le minuteu
                                                 System.Threading.Thread.Sleep(5000);
                                                 Console.Out.WriteLine("DRIIIIIIIIIIIIIIIIING"); });
 tasks.Add(Task.Factory.StartNew(()=> {System.Threading.Thread.Sleep(4000);/*trop facile de nettoyer :p*/});
-await Task.WaitAll(tasks);// puis on attend que tout soit fini
+await Task.WhenAll(tasks);// puis on attend que tout soit fini
 ```
 
-Si vos `Task` retournaient une valeur, un entier par exemple, vous pourriez retrouver l'ensemble des valeurs dans le tableau que retourne WaitAll.
+[[a]]
+|Une fonction `WaitAll` existe mais ce n'est pas une méthode asynchrone, elle met en pause le programme. Je vous conseille d'utiliser cette méthode dans votre fonction
+|main qui ne peut être asynchrone. A l'opposé, partout ailleurs, vous souhaiterez la majorité du temps utiliser `WhenAll`
+
+Si vos `Task` retournaient une valeur, un entier par exemple, vous pourriez retrouver l'ensemble des valeurs dans le tableau que retourne `WhenAll`.
 
 [[i]]
 |L'objet `Task` est vraiment primordial, il est à la base de toute un paradigme de programmation asynchrone appellé
 |["Task-based Asynchronous Pattern"](https://msdn.microsoft.com/en-us/library/hh873175.aspx) qu'on peut traduire par "Programmation Asynchrone basée sur les Tâches". 
-|Vous vous doutes bien qu'il existe de ce fait un autre "Pattern", nous le verrons plus tard. Je vous conseille néanmoins d'utiliser le TAP.
+|Vous vous doutes bien qu'il existe de ce fait deux autre "Patterns", nous le verrons plus tard. Je vous conseille néanmoins d'utiliser le TAP.
 

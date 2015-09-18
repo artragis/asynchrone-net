@@ -16,7 +16,7 @@ Avant tout, je vous propose de vous poser trois questions :
 - Y a-t-il plusieurs traitements que je puisse faire en parallèle?
 - Mon programme utilise-t-il aux mieux les ressources de l'ordinateur (exemple : un processeur multicoeur)?
 
-Vous vous rendrez vite compte qu'en informatique, on peut tout à fait faire un bébé en un mois du moment qu'on a 10 femmes,
+Vous vous rendrez vite compte qu'en informatique, on peut tout à fait faire un bébé en un mois du moment qu'on a 10 femmes[^typo],
 et que cela est rendu possible par les technique d'asynchronisme.
 
-![netlogo](archive:net-logo.jpg)
+[^typo]:oui, j'ai bien dit 10 femmes, c'est pas une erreur de calcul.
