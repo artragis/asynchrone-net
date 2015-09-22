@@ -72,8 +72,8 @@ ressources des coroutines/Task.
 
 Cet objet se trouve dans `System.Threading` et il se base sur deux compteurs :
 
-- le premier est le compteur de ressources minimum qui doit rester disponible. A priori, la majorité du temps, il vaudra 0
-- le second est le compteur de ressources libre. A priori le nombre de ressource libre initial doit valoir 1 dans notre cas.
+- le premier est le compteur de ressources libre. A priori le nombre de ressource libre initial doit valoir 1 ou 0. 
+- le second est le compteur de ressource disponibles au maximum. A priori il sera toujours de 1.
 
 L'utilisation se fait ainsi:
 
@@ -135,3 +135,6 @@ Le résultat montre bien le phénomène :
 
 ![Exécution en parallèle avec ressource partagée](archive:partage.png)
 
+[[i]]
+|Vous noterez que j'ai initié mon `SemaphoreSlim` avec aucune ressource disponible. Cela m'a permis de déclencher les tâches de manière à ce qu'elles exécutent toute la partie *préparatoire* puis bloque sur la ressource.
+|Ensuite j'ai dit que la ressource était libre, ce qui a eu pour conséquence de lancer les tâches.
