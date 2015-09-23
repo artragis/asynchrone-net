@@ -138,3 +138,68 @@ Le résultat montre bien le phénomène :
 [[i]]
 |Vous noterez que j'ai initié mon `SemaphoreSlim` avec aucune ressource disponible. Cela m'a permis de déclencher les tâches de manière à ce qu'elles exécutent toute la partie *préparatoire* puis bloque sur la ressource.
 |Ensuite j'ai dit que la ressource était libre, ce qui a eu pour conséquence de lancer les tâches.
+
+# Le cas particulier de la fenêtre graphique
+
+Si jusque là j'ai présenté les "ressources" comme quelque chose dans laquelle on peut lire ou écrire (ce qui peut être une liste, une imprimante, un objet connecté...),
+il existe un cas particulier qu'il me faut absolument vous présenter : l'interface graphique.
+
+Si ce cas est si particulier, c'est qu'il est particulièrement verrouillé pour éviter de donner au logiciel un état instable.
+De plus, votre interface graphique doit toujours être fluide. Et c'est là que les problèmes arrivent. En effet, si votre interface
+doit réagir à une action de l'utilisateur, disons un click, l'évènement est exécuté de manière synchrone au moteur de rendu de la fenêtre.
+
+Cela pose donc un problème lorsque vous devez faire des calculs importants ou que vous devez *attendre*. Pendant le temps de l'exécution
+de votre évènement, l'interface sera figée. 
+
+Heureusement, l'objet Task et à async/awaint vous éviteront ce soucis : le thread principal continuera de s'exécuter
+de manière fluide.
+
+## Cas numéro 1 : la modification de l'interface se fait avant ou après la tâche, pas pendant
+
+Pour gérer ce cas, vous n'aurez pas vraiment de nouveau concept à apprendre, vous serez peut être simplement heureux d'apprendre
+qu'un délégué peut tout à fait être async. Par exemple, si vous avez une tâche asynchrone à réaliser au click :
+
+```csharp
+
+public async Task VotreTache(){
+   await QuelquechoseDeLong();
+}
+
+private async void DoClick(object sender, EventArg args){ //votre délégué pour le click
+    this.Button1.Text = "Before the task"
+    await VotreTache();
+    this.Button1.Text = "After the task"
+}
+```
+
+Rien de très compliqué, on notera simplement que le listener d'événement est le seul cas où l'on tolère que votre fonction asynchrone
+retourne `void`.
+
+## Cas numéro 2: la tâche elle-même modifie l'interface au cours de son exécution
+
+Ce cas arrivera par exemple si votre tâche récupère des données de plusieurs sources différentes. Les affiche, puis les traite
+pour par exemple changer la couleur d'un indicateur ou l'état d'une barre de progression.
+
+Il me faut alors dire que temporairement, le temps de changer l'interface, la tâche (ou une sous tâche) doit s'exécuter
+dans le thread de la GUI. Pour cela, nous allons utiliser la notion de *contexte d'exécution*. 
+
+Si les `Task` peuvent être démarrées dans un thread différent, ce n'est pas forcément le cas. Vous pouvez leur demander, 
+de s'exécuter dans le même thread que la tâche parente ou dans un contexte qui ne demande pas l'établissement de nouveaux thread.
+
+A l'opposée, les parties de la tâche que vous désirez paralléliser peuvent être lancées dans une `threadpool`.
+
+```csharp
+public async Task VotreTache(){
+   
+   await QuelquechoseDeLongQuiNeTouchePasALaGui().ConfigureAwait(continueOnCapturedContext:false);
+   await QuelquechoseDeLongQuiToucheALaGui().ConfigureAwait(continueOnCapturedContext:true);
+}
+
+private async void DoClick(object sender, EventArg args){ //votre délégué pour le click
+    this.Button1.Text = "Before the task"
+    await VotreTache().ConfigureAwait(continueOnCapturedContext:true);//on continue sur la GUI
+    this.Button1.Text = "After the task"
+}
+```
+
+*[GUI]: Graphical UserInterface
