@@ -133,7 +133,7 @@ L'utilisation se fait ainsi:
 
 Le résultat montre bien le phénomène :
 
-![Exécution en parallèle avec ressource partagée](archive:partage.png)
+![Exécution en parallèle avec ressource partagée](http://zestedesavoir.com/media/galleries/2583/ffad1ecb-9bf3-42c6-83d5-206ca501d28e.png)
 
 [[i]]
 |Vous noterez que j'ai initié mon `SemaphoreSlim` avec aucune ressource disponible. Cela m'a permis de déclencher les tâches de manière à ce qu'elles exécutent toute la partie *préparatoire* puis bloque sur la ressource.
@@ -203,3 +203,52 @@ private async void DoClick(object sender, EventArg args){ //votre délégué pou
 ```
 
 *[GUI]: Graphical UserInterface
+
+# Cas numéro 3 : l'objet Task Chapitre 2
+
+Vous connaissez peut être l'installateur de VisualStudio qui possède deux barres de progression : une pour le téléchargement et une pour l'installation.
+
+Le principe de cet installateur est de vous faire gagner du temps en installant les fichiers déjà téléchargés et profiter de ce temps d'installation pour télécharger les autres.
+
+Si on devait représenter le code abstrait de cette fonctionnalité ça serait :
+
+![Procédure d'installation de VS](http://zestedesavoir.com/media/galleries/2583/25d8a05f-eefa-41d8-879f-be632c59bf31.png.960x960_q85.jpg)
+
+On peut donc imaginer un système avec des événements. Mais comme finalement chaque tâche est très séquencée, on peut simplement dire :
+
+- télécharge
+- puis notifie la barre d'avancement
+- puis attend que l'installation soit disponible
+- puis installe
+- puis notifie la barre d'avancement
+
+et lancer ces tâches de manière parallèle.
+
+L'objet Task possède une méthode qui exprime cela : ContinueWith qui a le bon goût de permettre à chaque `ContinueWith` de s'exécuter dans le contexte désiré (donc l'UI par exemple).
+
+Pour simplifier les choses j'ai supposé que chaque objet "dépendance" représentait un ensemble de paquets à installer indépendant des autres (comme ça on n'a pas à gérer les conflits).
+
+Le code final pourrait ressembler à ça :
+
+```csharp
+public async Task DownloadAndInstall(List<Dependance> dptList)
+{
+   List<Task<Dependance>> tasks = new List<Task<Dependance>>();
+   foreach(Dependance dpt in dptList)
+    {
+        Task<Dependance> downloadTask = Download(dpt).ContinueWith(
+                                (downloadTask, dpt)=>{ progressBarDownload.update(1); 
+                                                  return dpt;},
+                                TaskScheduler.FromCurrentSynchronizationContext()
+                            ).ContinueWith((t, dpt)=>{ InstallDependance(parentTask, dpt); return dtp;}
+                            ).ContinueWith(
+                                (installTask, dpt)=>{ progressBarInstall.update(1); return dpt;},
+                                TaskScheduler.FromCurrentSynchronizationContext()
+                            );
+        tasks.Add(downloadTask);
+     }
+     await Task.WhenAll(tasks);
+}
+```
+
+Vous noterez que la dépendance est passée de tâche en tâche et qu'à chaque fois la tâche parente aussi. 

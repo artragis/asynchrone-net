@@ -1,39 +1,37 @@
 {
     "object": "container", 
-    "slug": "asynchrone-net", 
+    "slug": "lasynchrone-et-le-multithread-en-net", 
     "title": "L'asynchrone et le multithread en .NET", 
     "introduction": "introduction.md", 
     "conclusion": "conclusion.md", 
     "children": [
         {
-            "object": "extract",
-            "slug": "await-async-un-couple-inseparable",
-            "title": "await/async, un couple inséparable",
+            "object": "extract", 
+            "slug": "await-async-un-couple-inseparable", 
+            "title": "await/async, un couple inséparable", 
             "text": "await-async-un-couple-inseparable.md"
-        },
+        }, 
         {
-            "object": "extract",
-            "slug": "tp-un-chargeur-de-liens-web",
-            "title": "TP: Un chargeur de liens web",
+            "object": "extract", 
+            "slug": "tp-un-chargeur-de-liens-web", 
+            "title": "TP: Un chargeur de liens web", 
             "text": "tp-un-chargeur-de-liens-web.md"
-        },
+        }, 
         {
-            "object": "extract",
-            "slug": "partage-de-ressources",
-            "title": "Partage de ressources",
+            "object": "extract", 
+            "slug": "partage-de-ressources", 
+            "title": "Partage de ressources", 
             "text": "partage-de-ressources.md"
-        },
+        }, 
         {
-            "object": "extract",
-            "slug": "les-autres-modeles-de-programmation",
-            "title": "Les autres modèles de programmation",
+            "object": "extract", 
+            "slug": "les-autres-modeles-de-programmation", 
+            "title": "Les autres modèles de programmation", 
             "text": "les-autres-modeles-de-programmation.md"
         }
-            
     ], 
     "version": 2, 
     "description": "async et await sont vos amis.", 
     "type": "TUTORIAL", 
-    "licence": "CC-BY-SA"
+    "licence": "CC BY"
 }
-

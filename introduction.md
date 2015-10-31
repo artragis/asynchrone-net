@@ -20,3 +20,10 @@ Vous vous rendrez vite compte qu'en informatique, on peut tout à fait faire un 
 et que cela est rendu possible par les technique d'asynchronisme.
 
 [^typo]:oui, j'ai bien dit 10 femmes, c'est pas une erreur de calcul.
+
+[[i]]
+|Le tutoriel se veut accessible mais il faudra que vous ayez les bases en programmation.
+|J'entends par là savoir les structures de contrôle de base (du `if` au `using`) et savoir ce que représente une classe. Il serait intéressant que vous ayez déjà créé une interface graphique.
+
+[[a]]
+|Ce tutoriel vous sera particulièrement utile si vous faites des applications mobiles. Dès qu'une tâche demande d'attendre, les applications mobiles vous obligent à utiliser l'asynchrone.

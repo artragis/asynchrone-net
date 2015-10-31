@@ -2,10 +2,9 @@ Le C# se veut dès sa conception un langage *moderne*. Cela signifie qu'il essai
 
 L'un de ces succès a été la mise en place de systèmes de coroutines et de multithreading facilement programmable.
 
-La méthode choisie pour obtenir cette facilité est souvent[^async-python] l'introduction de deux mots clefs async et await. Arrivés en C# trois ces deux mots clefs sont
-inséparables.
+La méthode choisie pour obtenir cette facilité est souvent[^async-python] l'introduction de deux mots clefs async et await. Arrivés en C#3 ces deux mots clefs sont inséparables.
 
-[^async-python]: Et cela n'est pas une mince affaire comme le prouve l'exemple de la version 3.5 du langage [python]()
+[^async-python]: Et cela n'est pas une mince affaire comme le prouve l'exemple de la version 3.5 du langage [python](http://sametmax.com/async-await-la-feature-de-derniere-minute-de-python-3-5/)
 
 # Utiliser async et await
 
@@ -17,7 +16,7 @@ Mettons nous dans une situation de votre vie courante : faisons cuire des cookie
 
 Un résumé de la recette peut être celle-ci:
 
-```bash
+```text
 jusqu'à ce que la file des ingrédient soit vide
    prenez l'ingrédient
    enlevez-le de son emballage/coquille
@@ -31,13 +30,13 @@ sortez les cookies du four
 ```
 
 Pour bien comprendre notre problématique, mettez-vous dans la peau d'un système d'exploitation, ou d'un processeur.
-Vous avez exécuter une série d'instruction assez basiques, et d'un coup, on vous demande d'attendre.
+Vous avez exécuté une série d'instruction assez basiques, et d'un coup, on vous demande d'attendre.
 
 Alors vous attendez.
 
 Et si quelqu'un vous demande de l'aide, vous dites "non, je dois attendre".
 
-Avouons que cela est peu pratique. Alors vous avez une idée. Vous dites "je sais, je vais mettre un minuteur, et je reviendrai dans la cuisine uniquement quand il sonnera".
+Avouons que cela est peu pratique. Alors vous avez une idée. Vous vous dites "je sais, je vais mettre un minuteur, et je reviendrai dans la cuisine uniquement quand il sonnera".
 
 Voilà, vous venez de faire votre première action asynchrone.
 
@@ -189,7 +188,7 @@ alors je te laisse libre mais revient me voir rapidement".
 [[q]]
 |Et ton histoire de Task factomachin là?
 
-await n'est capable d'attendre que des fonctions asynchrone. On a vue qu'en fait une fonction asynchrone c'est une Task qui a été créé par async.
+await n'est capable d'attendre que des fonctions asynchrone. On a vu qu'en fait une fonction asynchrone est une Task qui a été créé par async.
 Mais on peut aussi la créer nous même,pour cela, il faut utiliser `Task<Votre Type De Retour>.Factory.StartNew(()=>lecode de la fonction; return ce_qu_il_faut)`.
 C'est à la main la même chose que lorsqu'on avait fait async.
 
@@ -213,9 +212,9 @@ L'idée derrière les coroutines est celle-ci :
 - lancer les coroutines une par une dans le processus du cadenceur;
 - régulièrement le cadenceur vérifie l'état des coroutines et avertit le programme principal de leur fin.
 
-![Organisation des coroutines](archive:boucle-coroutine.png)
+![Schéma de fonctionnement d'une coroutine](http://zestedesavoir.com/media/galleries/2583/3b9d9738-7543-4038-b8f7-42c287b99130.png.960x960_q85.jpg)
 
-L'idée maintenant sera de lancer les `Task` asynchrone puis de demander "attend qu'elles soient toutes finies".
+L'idée maintenant sera de lancer les `Task` asynchrones puis de demander "attend qu'elles soient toutes finies".
 
 Et ça se fait très simplement :
 

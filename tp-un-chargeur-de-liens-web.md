@@ -23,9 +23,9 @@ Pour traiter le HTML vous pouvez utiliser le package [HtmlAgility](http://htmlag
 Pour mieux observer l'asynchronisme des tâches, je vous conseille de terminer chaque tâche par un `Console.WriteLine("Nom de la tâche " + une_autre_info)`. De même, je vous
 conseille d'exécuter plusieurs fois le même programme pour observer l'ordre d'exécution des tâches.
 Enfin, ayiez un oeil sur votre gestionnaire de ressources. Pour y accéder, utiliser `....msc`
-ou bien via le gestionaire des tâche ||ctrl||+||Maj||+||echap|| puis "ouvrir le gestionnaire de ressource".
+ou bien via le gestionaire des tâche ||ctrl||+||Maj||+||echap|| puis "ouvrir le gestionnaire de ressources".
 
-![Gestionnaire de ressources]() 
+![Le gestionnaire de ressources nous indique le nombre de thread. 30 dans notre cas](http://zestedesavoir.com/media/galleries/2583/31af9781-e26d-4642-9431-89869da90fd3.png.960x960_q85.png)
 
 [[i]]
 |Notre but n'est pas de faire un aspirateur complet de site web, juste de télécharger les pages actuelles et d'en tirer les liens et d'eux même les télécharger.
@@ -33,10 +33,109 @@ ou bien via le gestionaire des tâche ||ctrl||+||Maj||+||echap|| puis "ouvrir le
 |il est fortement recommandé d'en demander l'autorisation au propriétaire afin que vous ne mettiez pas en périle sa disponibilité.
 
 ## Correction
+[[secret]]
+| 
+| ```csharp
+| using HtmlAgilityPack;
+| using System;
+| using System.Collections.Generic;
+| using System.IO;
+| using System.Linq;
+| using System.Net;
+| using System.Text;
+| using System.Threading.Tasks;
+| using System.Xml.Linq;
+| 
+| namespace WebGetter
+| {
+|     class Program
+|     {
+|         static void Main(string[] args)
+|         {
+|             List<string> urls = new List<string>();
+|             string[] _urls = {"http://francoisdambrine.me"};
+|             urls.AddRange(_urls);
+|             GetLinksThenDownloadPages(urls);
+|             Console.ReadLine();
+|         }
+|         static async void GetLinksThenDownloadPages(IEnumerable<string> urls)
+|         {
+|             List<string> downloadedUrls = await GetLinks(urls);
+|             await DownloadFilesFromLinks(downloadedUrls);
+|         }
+|         static async Task<List<string>> GetLinks(IEnumerable<string> startUrls)
+|         {
+|             List<Task<List<string>>> tasks = new List<Task<List<string>>>();
+|             foreach(string url in startUrls)
+|             {
+|                 tasks.Add(DownloadLinksFromUrlAsync(url));
+|             }
+|             return (from list in await Task<List<string>>.WhenAll(tasks)
+|                     from link in list
+|                     select link).ToList();
+|         }
+| 
+|         static async Task<List<string>> DownloadLinksFromUrlAsync(string url)
+|         {
+|             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+|             HttpWebResponse response = await request.GetResponseAsync() as HttpWebResponse;
+|             using (var streamReader = new StreamReader(response.GetResponseStream()))
+|             {
+|                 string htmlCode = streamReader.ReadToEnd();
+|                 HtmlDocument parsed = new HtmlDocument();
+|                 parsed.LoadHtml(htmlCode);
+|                 IEnumerable<string> aElement = from element in parsed.DocumentNode.Descendants()
+|                                                where element.Name.ToString().ToLower() == "a"
+|                                                where element.Attributes["href"] != null
+|                                                select element.Attributes["href"].Value;
+|                 return aElement.ToList();
+|             }
+| 
+|         }
+| 
+|         static async Task WriteFileFromUrl(string url)
+|         {
+|             try {
+|                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+|                 HttpWebResponse response = await request.GetResponseAsync() as HttpWebResponse;
+|                 Guid g = Guid.NewGuid();
+|                 using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+|                 {
+|                     using (StreamWriter writer = new StreamWriter(g.ToString() + ".html"))
+|                     {
+|                         await writer.WriteAsync(await streamReader.ReadToEndAsync());
+|                         Console.WriteLine(g.ToString() + ".html : " + url);
+|                     }
+|                 }
+|             }
+|             catch(UriFormatException exception)
+|             {
+|                 Console.Error.WriteLine(exception.Message);
+|             }
+|             catch(WebException exception)
+|             {
+|                 Console.Error.WriteLine(url + " was correct but not downloaded due to " + exception.Message);
+|             }
+|         }
+| 
+|         static async Task DownloadFilesFromLinks(IEnumerable<string> list)
+|         {
+|             List<Task> tasks = new List<Task>();
+|             foreach(string url in list)
+|             {
+|                 tasks.Add(WriteFileFromUrl(url));
+|             }
+|             await Task.WhenAll(tasks);
+|         }
+|     }
+| }
+| 
+| ```
+| Code: correction
 
-```csharp
+Si vous avez une version de visualstudio qui le support, vous pourrez observer sur le profileur que le processeur est vraiment peu utilisé par notre programme.
 
-```
+![Le profileur nous dit que le processeur attend beaucoup](http://zestedesavoir.com/media/galleries/2583/82331b99-9ab2-4558-97c5-adb243da24ae.png.960x960_q85.png)
 
 # Quelques améliorations
 
